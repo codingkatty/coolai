@@ -14,27 +14,43 @@ app.use(express.json());
 
 app.post('/signup', async (req, res) => {
   const { email, password } = req.body;
-  const { user, error } = await supabase.auth.signUp({ email, password });
-  
-  if (error) {
-    return res.status(400).json({ error: error.message });
+  console.log('Signup request received:', { email, password });
+
+  try {
+    const { user, error } = await supabase.auth.signUp({ email, password });
+    
+    if (error) {
+      console.error('Error during signup:', error.message);
+      return res.status(400).json({ error: error.message });
+    }
+    
+    res.json({ user });
+  } catch (err) {
+    console.error('Unexpected error during signup:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-  
-  res.json({ user });
 });
 
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  const { session, error } = await supabase.auth.signIn({ email, password });
-  
-  if (error) {
-    return res.status(400).json({ error: error.message });
+  console.log('Login request received:', { email, password });
+
+  try {
+    const { session, error } = await supabase.auth.signIn({ email, password });
+    
+    if (error) {
+      console.error('Error during login:', error.message);
+      return res.status(400).json({ error: error.message });
+    }
+    
+    const token = generateToken(session.user);
+    await supabase.from('api_tokens').insert([{ user_id: session.user.id, token }]);
+    
+    res.json({ token });
+  } catch (err) {
+    console.error('Unexpected error during login:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-  
-  const token = generateToken(session.user);
-  await supabase.from('api_tokens').insert([{ user_id: session.user.id, token }]);
-  
-  res.json({ token });
 });
 
 app.get('/protected', verifyToken, (req, res) => {
