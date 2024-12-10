@@ -133,8 +133,8 @@ app.post('/generate', verifyToken, async (req, res) => {
   }
 });
 
-app.get('/protected', verifyToken, (req, res) => {
-  res.json({ message: 'This is protected data', user: req.user });
+app.get('/health', (req, res) => {
+    res.status(200).send('OK');
 });
 
 app.use((err, req, res, next) => {
