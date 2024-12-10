@@ -3,6 +3,7 @@ const { createClient } = require('@supabase/supabase-js');
 const { generateToken, verifyToken } = require('./token');
 const cors = require('cors');
 require('dotenv').config();
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -103,6 +104,35 @@ app.post('/login', async (req, res) => {
   }
 });
 
+app.post('/generate', verifyToken, async (req, res) => {
+  const { prompt } = req.body;
+  
+  if (!prompt) {
+    return res.status(400).json({ error: 'Prompt is required' });
+  }
+
+  try {
+    console.log('Generating response for prompt:', prompt);
+    
+    const result = await model.generateContent(prompt);
+    const response = await result.response.text();
+    
+    console.log('Generated response:', response);
+    
+    res.json({ 
+      success: true,
+      response: response 
+    });
+
+  } catch (err) {
+    console.error('Error generating response:', err);
+    res.status(500).json({ 
+      error: 'Failed to generate response',
+      details: err.message 
+    });
+  }
+});
+
 app.get('/protected', verifyToken, (req, res) => {
   res.json({ message: 'This is protected data', user: req.user });
 });
@@ -115,3 +145,6 @@ app.use((err, req, res, next) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });

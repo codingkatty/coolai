@@ -3,88 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>API Authentication</title>
+  <title>CoolAI - Gemini API Made Simple</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>API Authentication</h1>
-  
-  <h2>Sign Up</h2>
-  <form id="signup-form">
-    <input type="email" id="signup-email" placeholder="Email" required>
-    <input type="password" id="signup-password" placeholder="Password" required>
-    <button type="submit" id="signup-button">Sign Up</button>
-  </form>
-  
-  <h2>Login</h2>
-  <form id="login-form">
-    <input type="email" id="login-email" placeholder="Email" required>
-    <input type="password" id="login-password" placeholder="Password" required>
-    <button type="submit" id="login-button">Login</button>
-  </form>
-  
-  <h2>Token</h2>
-  <pre id="token"></pre>
-  
-  <script>
-    const signupForm = document.getElementById('signup-form');
-    const signupButton = document.getElementById('signup-button');
-    const loginForm = document.getElementById('login-form');
+  <nav class="navbar">
+    <div class="nav-brand">CoolAI</div>
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="auth.html">Get API</a>
+      <a href="docs.html">Docs</a>
+    </div>
+  </nav>
 
-    signupForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      signupButton.disabled = true;
-      const email = document.getElementById('signup-email').value;
-      const password = document.getElementById('signup-password').value;
-      
-      try {
-        const response = await fetch('https://coolai.onrender.com/signup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        
-        const data = await response.json();
-        console.log('Signup response:', data);
-
-        if (response.ok) {
-          alert('Signup successful');
-        } else if (data && data.error) {
-          alert(`Error: ${data.error}`);
-        } else {
-          alert('An unknown error occurred during signup.');
-        }
-      } catch (error) {
-        alert('An unexpected error occurred.');
-        console.error('Signup error:', error);
-      } finally {
-        signupButton.disabled = false;
-      }
-    });
-
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('login-email').value;
-      const password = document.getElementById('login-password').value;
-      
-      try {
-        const response = await fetch('https://coolai.onrender.com/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        
-        const data = await response.json();
-        console.log('Login response:', data);
-        if (response.ok) {
-          document.getElementById('token').textContent = `Token: ${data.token}`;
-        } else {
-          document.getElementById('token').textContent = `Error: ${data.error || 'Unknown error occurred.'}`;
-        }
-      } catch (error) {
-        document.getElementById('token').textContent = 'An unexpected error occurred.';
-        console.error('Login error:', error);
-      }
-    });
-  </script>
+  <main class="hero">
+    <h1 style="font-family: Inter;">Gemini API<br>Made <span>Simple</span></h1>
+    <p class="subtitle">Easy to integrate. Built for Javascript.</p>
+    <a href="auth.html" class="cta-button">Get Your API Key</a>
+  </main>
 </body>
 </html>

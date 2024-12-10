@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - CoolAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">CoolAI</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="auth.html">Get API</a>
+            <a href="docs.html" class="active">Docs</a>
+        </div>
+    </nav>
+
+    <div class="docs-container">
+        <aside class="docs-sidebar">
+            <nav>
+                <a href="#quickstart" class="active">QuickStart</a>
+                <a href="#authentication">Authentication</a>
+                <a href="#generate-endpoint">Generate Endpoint</a>
+                <a href="#examples">Examples</a>
+            </nav>
+        </aside>
+
+        <main class="docs-content">
+            <section id="quickstart">
+                <h1>QuickStart</h1>
+                <p>Get started with CoolAI API in minutes.</p>
+
+                <h2>1. Get Your API Key</h2>
+                <ol>
+                    <li>Sign up for an account at <a href="/auth.html">CoolAI Dashboard</a></li>
+                    <li>Verify your email address</li>
+                    <li>Log in to your account</li>
+                    <li>Your API key will be displayed and ready to use</li>
+                </ol>
+
+                <h2>2. Make Your First Request</h2>
+                <pre><code>const response = await fetch('https://coolai.onrender.com/generate', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    prompt: 'What is artificial intelligence?'
+  })
+});
+
+const data = await response.json();
+console.log(data.response);</code></pre>
+            </section>
+
+            <section id="authentication">
+                <h1>Authentication</h1>
+                <p>All API requests require authentication using your API key.</p>
+
+                <h2>Using API Keys</h2>
+                <p>Include your API key in the Authorization header of all requests:</p>
+                <pre><code>Authorization: Bearer YOUR_API_KEY</code></pre>
+
+                <div class="warning-box">
+                    <h3>⚠️ Security Notice</h3>
+                    <p>Never share your API key or commit it to version control. Use environment variables to store
+                        sensitive information.</p>
+                </div>
+            </section>
+
+            <section id="generate-endpoint">
+                <h1>Generate Endpoint</h1>
+                <p>Generate AI responses using the Gemini model.</p>
+
+                <h2>Endpoint Details</h2>
+                <pre><code>POST https://coolai.onrender.com/generate</code></pre>
+
+                <h2>Headers</h2>
+                <pre><code>{
+  "Authorization": "Bearer YOUR_API_KEY",
+  "Content-Type": "application/json"
+}</code></pre>
+
+                <h2>Request Body</h2>
+                <pre><code>{
+  "prompt": "Your prompt text here"
+}</code></pre>
+
+                <h2>Success Response</h2>
+                <pre><code>{
+  "success": true,
+  "response": "AI generated response text"
+}</code></pre>
+
+                <h2>Error Response</h2>
+                <pre><code>{
+  "error": "Error message",
+  "details": "Detailed error information"
+}</code></pre>
+
+                <h2>Notes</h2>
+                <ul>
+                    <li>Uses Gemini 1.5 Flash model for fast response generation</li>
+                    <li>Prompt text is required in the request body</li>
+                    <li>Rate limits may apply to API usage</li>
+                </ul>
+            </section>
+
+            <section id="examples">
+                <h1>Examples</h1>
+
+                <h2>JavaScript</h2>
+                <pre><code>async function generateResponse(prompt) {
+    const response = await fetch('https://coolai.onrender.com/generate', {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Bearer YOUR_API_KEY',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ prompt })
+    });
+    
+    const data = await response.json();
+    return data.response;
+}</code></pre>
+
+                <h2>Python</h2>
+                <pre><code>import requests
+
+def generate_response(prompt):
+    response = requests.post(
+        'https://coolai.onrender.com/generate',
+        headers={
+            'Authorization': 'Bearer YOUR_API_KEY',
+            'Content-Type': 'application/json'
+        },
+        json={'prompt': prompt}
+    )
+    return response.json()['response']</code></pre>
+            </section>
+        </main>
+    </div>
+</body>
+
+</html>

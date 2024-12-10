@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get API Key - CoolAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-brand">CoolAI</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="auth.html" class="active">Get API</a>
+      <a href="docs.html">Docs</a>
+    </div>
+  </nav>
+
+  <div class="auth-page">
+    <div class="auth-container">
+      <div class="container">
+        <h1>API Authentication</h1>
+
+        <div id="notification" class="notification" style="display: none;"></div>
+
+        <br>
+        <h2>Sign Up</h2>
+        <form id="signup-form">
+          <div class="form-group">
+            <input type="email" id="signup-email" placeholder="Email" required>
+          </div>
+          <div class="form-group">
+            <input type="password" id="signup-password" placeholder="Password" required>
+          </div>
+          <button type="submit" id="signup-button">
+            <div class="loader"></div>
+            <span>Sign Up</span>
+          </button>
+        </form>
+
+        <br>
+        <h2>Login</h2>
+        <form id="login-form">
+          <div class="form-group">
+            <input type="email" id="login-email" placeholder="Email" required>
+          </div>
+          <div class="form-group">
+            <input type="password" id="login-password" placeholder="Password" required>
+          </div>
+          <button type="submit" id="login-button">
+            <div class="loader"></div>
+            <span>Login</span>
+          </button>
+        </form>
+
+        <div class="token-container">
+          <h2>Your API Key</h2>
+          <div class="token-display">
+            <pre id="token"></pre>
+            <button id="copy-button" class="icon-button">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M8 4H16V2H8V4ZM16 6H8C6.9 6 6 6.9 6 8V20C6 21.1 6.9 22 8 22H16C17.1 22 18 21.1 18 20V8C18 6.9 17.1 6 16 6ZM16 20H8V8H16V20Z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const signupForm = document.getElementById('signup-form');
+    const signupButton = document.getElementById('signup-button');
+    const loginForm = document.getElementById('login-form');
+    const loginButton = document.getElementById('login-button');
+    const notification = document.getElementById('notification');
+
+    function showNotification(message, type) {
+      notification.textContent = message;
+      notification.className = `notification ${type}`;
+      notification.style.display = 'block';
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 5000);
+    }
+
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      signupButton.classList.add('loading');
+      signupButton.disabled = true;
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+      
+      try {
+        const response = await fetch('https://coolai.onrender.com/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        
+        const data = await response.json();
+        console.log('Signup response:', data);
+
+        if (response.ok) {
+          showNotification('Signup successful! Please check your email to confirm your account before logging in.', 'success');
+          signupForm.reset();
+        } else {
+          showNotification(`Error: ${data.error || 'Unknown error occurred.'}`, 'error');
+        }
+      } catch (error) {
+        showNotification('An unexpected error occurred.', 'error');
+        console.error('Signup error:', error);
+      } finally {
+        signupButton.classList.remove('loading');
+        signupButton.disabled = false;
+      }
+    });
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginButton.classList.add('loading');
+      loginButton.disabled = true;
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      
+      try {
+        const response = await fetch('https://coolai.onrender.com/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        
+        const data = await response.json();
+        console.log('Login response:', data);
+        if (response.ok) {
+          showNotification('Login successful!', 'success');
+          document.getElementById('token').textContent = data.token;
+        } else {
+          showNotification(`Error: ${data.error || 'Unknown error occurred.'}`, 'error');
+          document.getElementById('token').textContent = '';
+        }
+      } catch (error) {
+        showNotification('An unexpected error occurred.', 'error');
+        document.getElementById('token').textContent = '';
+        console.error('Login error:', error);
+      } finally {
+        loginButton.classList.remove('loading');
+        loginButton.disabled = false;
+      }
+    });
+
+    document.getElementById('copy-button')?.addEventListener('click', async () => {
+      const token = document.getElementById('token').textContent;
+      if (token) {
+        try {
+          await navigator.clipboard.writeText(token);
+          showNotification('API key copied to clipboard!', 'success');
+        } catch (err) {
+          showNotification('Failed to copy API key', 'error');
+        }
+      }
+    });
+  </script>
+</body>
+</html>
