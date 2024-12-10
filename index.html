@@ -45,10 +45,13 @@
         
         const data = await response.json();
         console.log('Signup response:', data);
+
         if (response.ok) {
           alert('Signup successful');
+        } else if (data && data.error) {
+          alert(`Error: ${data.error}`);
         } else {
-          alert(`Error: ${data.error || 'Unknown error occurred.'}`);
+          alert('An unknown error occurred during signup.');
         }
       } catch (error) {
         alert('An unexpected error occurred.');
