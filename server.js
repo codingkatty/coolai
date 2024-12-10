@@ -11,6 +11,7 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANO
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static('public'));
 
 app.post('/signup', async (req, res) => {
   const { email, password } = req.body;
@@ -21,9 +22,11 @@ app.post('/signup', async (req, res) => {
     
     if (error) {
       console.error('Error during signup:', error.message);
-      return res.status(400).json({ error: error.message });
+      console.log('Sending error response:', { error: error.message });
+      return res.status(400).json({ error: error.message || 'Signup failed.' });
     }
     
+    console.log('User signed up successfully:', user);
     res.json({ user });
   } catch (err) {
     console.error('Unexpected error during signup:', err);
@@ -40,12 +43,19 @@ app.post('/login', async (req, res) => {
     
     if (error) {
       console.error('Error during login:', error.message);
-      return res.status(400).json({ error: error.message });
+      console.log('Sending error response:', { error: error.message });
+      return res.status(400).json({ error: error.message || 'Login failed.' });
     }
     
     const token = generateToken(session.user);
-    await supabase.from('api_tokens').insert([{ user_id: session.user.id, token }]);
+    const { data, error: insertError } = await supabase.from('api_tokens').insert([{ user_id: session.user.id, token }]);
     
+    if (insertError) {
+      console.error('Error storing API token:', insertError.message);
+      return res.status(500).json({ error: 'Failed to store API token' });
+    }
+    
+    console.log('Login successful, token generated:', token);
     res.json({ token });
   } catch (err) {
     console.error('Unexpected error during login:', err);
